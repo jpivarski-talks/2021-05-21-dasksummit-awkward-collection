@@ -62,3 +62,26 @@ HERE
 \end{frame}
 
 \end{document}
+
+%% from coffea import hist, processor
+
+%% class MyAnalysis(processor.ProcessorABC):
+%%     def __init__(self, **parameters):
+%%         self.parameters = parameters
+%%         self.accumulator = processor.dict_accumulator(
+%%             # histograms...
+%%         )
+
+%%     def process(self, df):
+%%         output = self.accumulator.identity()
+
+%%         # analyze one partition of data, filling histograms...
+
+%%         return output
+
+%%     def postprocess(self, accumulator):
+%%         # final touches on combined histograms, like scaling...
+
+%%         return accumulator
+
+%% analysis = MyAnalysis(param1=...)
