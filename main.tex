@@ -357,9 +357,9 @@ Dask arrays ask the user when to evaluate:
 >>> array = np.concatenate([
 ...     da.from_delayed(
 ...         dask.delayed(read, pure=True)(i),
-...         (10,),
-...         np.int64,
-...     ) for i in range(10)
+...         shape=(10,),
+...         dtype=np.dtype(np.int64),
+...     ) for i in range(5)
 ... ])
 >>> another = array[:15]
 \end{minted}
@@ -375,6 +375,9 @@ array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4])
 Awkward VirtualArrays evaluate whenever they need information.
 \end{frame}
 
-
+\begin{frame}{Degrees of transparency}
+\vspace{1 cm}
+\includegraphics[width=\linewidth]{degrees-of-transparency.pdf}
+\end{frame}
 
 \end{document}

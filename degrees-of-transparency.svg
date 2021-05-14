@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="181.32077mm"
+   height="51.559269mm"
+   viewBox="0 0 181.32077 51.559269"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="degrees-of-transparency.svg">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path880"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="431.22426"
+     inkscape:cy="44.757376"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="5"
+     fit-margin-left="5"
+     fit-margin-right="5"
+     fit-margin-bottom="5"
+     inkscape:window-width="1920"
+     inkscape:window-height="1136"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-72.263151,-157.30977)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.10000002;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="226.40773"
+       y="166.59822"
+       id="text817"><tspan
+         sodipodi:role="line"
+         id="tspan815"
+         x="226.40773"
+         y="166.59822"
+         style="line-height:1.10000002;stroke-width:0.26458332">VirtualArrays</tspan><tspan
+         sodipodi:role="line"
+         x="226.40773"
+         y="172.80711"
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         id="tspan819">evaluate</tspan><tspan
+         sodipodi:role="line"
+         x="226.40773"
+         y="179.01601"
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         id="tspan821">as needed.</tspan></text>
+    <text
+       id="text829"
+       y="166.59822"
+       x="162.80502"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.10000002;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         id="tspan827"
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         y="166.59822"
+         x="162.80502"
+         sodipodi:role="line">Dask arrays</tspan><tspan
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         y="172.80711"
+         x="162.80502"
+         sodipodi:role="line"
+         id="tspan836">evaluate</tspan><tspan
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         y="179.01601"
+         x="162.80502"
+         sodipodi:role="line"
+         id="tspan838">when the user</tspan><tspan
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         y="185.22488"
+         x="162.80502"
+         sodipodi:role="line"
+         id="tspan840">says, &quot;Go!&quot;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.10000002;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="99.407639"
+       y="166.59822"
+       id="text850"><tspan
+         sodipodi:role="line"
+         x="99.407639"
+         y="166.59822"
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         id="tspan861">Coffea users</tspan><tspan
+         sodipodi:role="line"
+         x="99.407639"
+         y="172.80711"
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         id="tspan865">explicitly work</tspan><tspan
+         sodipodi:role="line"
+         x="99.407639"
+         y="179.01601"
+         style="line-height:1.10000002;stroke-width:0.26458332"
+         id="tspan867">on a partition.</tspan></text>
+    <path
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.52899998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 77.263151,195.32441 H 247.54143"
+       id="path869"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="162.93181"
+       y="202.69495"
+       id="text1155"><tspan
+         sodipodi:role="line"
+         id="tspan1153"
+         x="162.93181"
+         y="202.69495"
+         style="stroke-width:0.26458332">transparency</tspan></text>
+  </g>
+</svg>
