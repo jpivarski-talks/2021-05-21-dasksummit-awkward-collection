@@ -192,6 +192,127 @@ but\ldots
 
 \vspace{0.25 cm}
 \uncover<5->{\textcolor{darkblue}{Unlike dataframe:} in not having an index and not having columns, apart from record fields.}
+
+\vspace{0.25 cm}
+\uncover<6->{\textcolor{darkorange}{\bf Somewhere between an array and a bag.}}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Fundamental question}
+\Large
+
+{\it If} Awkward Arrays are to be integrated with Dask, {\it then} they need to be a new collection type.
+
+\vspace{1 cm}
+\uncover<2->{\textcolor{darkblue}{But do we really need Awkward Dask arrays?}}
+\end{frame}
+
+\begin{frame}{Specifically, for particle physics}
+\Large
+
+\textcolor{darkblue}{Do physicists need out-of-core datasets?} \uncover<2->{\textcolor{darkorange}{\bf Yes!}}
+
+\uncover<2->{\phantom{Do physicists need out-of-core datasets?} typical RAM = 10~GB}
+
+\uncover<2->{\phantom{Do physicists need out-of-core datasets?} typical analysis = 10~TB}
+
+\vspace{1 cm}
+
+\uncover<3->{\textcolor{darkblue}{Do physicists need a distributed array abstraction?}} \uncover<4->{\textcolor{darkorange}{\bf Arguably.}}
+\end{frame}
+
+\begin{frame}[fragile]{LHC analyses can be neatly divided into map-reduce}
+\vspace{0.25 cm}
+\small
+\begin{minted}{python}
+import coffea
+
+class MyAnalysis(coffea.processor.ProcessorABC):
+    def __init__(self, **parameters):
+        self.parameters = parameters
+        self.accumulator = ... # histograms
+
+    def process(self, df):
+        output = self.accumulator.identity()
+        # analyze one partition of data, filling histograms...
+        return output
+
+    def postprocess(self, accumulator):
+        # final touches on combined histograms, like scaling...
+        return accumulator
+
+analysis = MyAnalysis(parameter1=...)  # run with a Dask scheduler
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Moreover, Awkward Array already has a delayed abstraction}
+\small
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+>>> def read(i):
+...     print("reading", i)
+...     return ak.Array(range(10))
+... 
+>>> form = ak.forms.Form.from_numpy(np.dtype(np.int64))
+>>> array = ak.partitioned([
+...     ak.virtual(read, (i,), form=form, length=10) for i in range(5)
+... ])
+\end{minted}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<2->
+\begin{minted}{python}
+>>> array[:5]
+reading 0
+<Array [0, 1, 2, 3, 4] type='5 * int64'>
+\end{minted}
+\end{uncoverenv}
+\begin{uncoverenv}<3->
+\vspace{-0.3 cm}
+\begin{minted}{python}
+>>> array[:15]
+reading 1
+<Array [0, 1, 2, 3, 4, 5, ... 9, 0, 1, 2, 3, 4] type='15 * int64'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<4->
+\begin{minted}{python}
+>>> array
+reading 4
+<Array [0, 1, 2, 3, 4, 5, ... 4, 5, 6, 7, 8, 9] type='50 * int64'>
+\end{minted}
+\end{uncoverenv}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Moreover, Awkward Array already has a delayed abstraction}
+\small
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+>>> array.layout
+\end{minted}
+\vspace{-0.4 cm}
+\begin{Verbatim}[commandchars=\\\{\}]
+<\textcolor{darkgreen}{\textbf{IrregularlyPartitionedArray}}>
+    <\textcolor{darkgreen}{\textbf{partition}} start="0" stop="10">
+        <\textcolor{blue}{\textbf{VirtualArray}} cache_key="ak0">
+            <ArrayGenerator f="<function read at 0x7f...>" args="(0,)">
+                <length>10</length>
+                <form>\{
+                    "class": "NumpyArray",
+                    "itemsize": 8,
+                    "format": "l",
+                    "primitive": "int64"
+                \}</form>
+            </ArrayGenerator>
+            <ArrayCache mapping="\{\}"/>
+        </\textcolor{blue}{\textbf{VirtualArray}}>
+    </\textcolor{darkgreen}{\textbf{partition}}>
+    <\textcolor{darkgreen}{\textbf{partition}} start="10" stop="20">
+        ...
+\end{Verbatim}
 \end{columns}
 \end{frame}
 
@@ -199,26 +320,3 @@ but\ldots
 
 
 \end{document}
-
-%% from coffea import hist, processor
-
-%% class MyAnalysis(processor.ProcessorABC):
-%%     def __init__(self, **parameters):
-%%         self.parameters = parameters
-%%         self.accumulator = processor.dict_accumulator(
-%%             # histograms...
-%%         )
-
-%%     def process(self, df):
-%%         output = self.accumulator.identity()
-
-%%         # analyze one partition of data, filling histograms...
-
-%%         return output
-
-%%     def postprocess(self, accumulator):
-%%         # final touches on combined histograms, like scaling...
-
-%%         return accumulator
-
-%% analysis = MyAnalysis(param1=...)
