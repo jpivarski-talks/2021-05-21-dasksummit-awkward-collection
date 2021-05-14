@@ -316,6 +316,64 @@ reading 4
 \end{columns}
 \end{frame}
 
+\begin{frame}{Moreover, Awkward Array already has a delayed abstraction}
+\Large
+\vspace{0.25 cm}
+\begin{columns}[t]
+\column{0.55\linewidth}
+\mbox{ } \hfill \textcolor{darkgreen}{\underline{\tt\textbf{PartitionedArray}}} \hfill \mbox{ }
+
+\vspace{0.25 cm}
+\begin{itemize}
+\item Only allowed at the top of an Awkward Array's tree structure.
+
+\item Partition sizes must be known.
+
+\end{itemize}
+
+\column{0.5\linewidth}
+\mbox{ } \hfill \textcolor{blue}{\underline{\tt\textbf{VirtualArray}}} \hfill \mbox{ }
+
+\vspace{0.25 cm}
+\begin{itemize}
+\item Allowed anywhere in a tree structure.
+
+\item Form (detailed type) and length are optional, but recommended.
+
+\item Materialized and cached as soon as an operation needs more information.
+
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Fundamental difference between VirtualArrays and Dask arrays}
+\Large
+\vspace{0.25 cm}
+Dask arrays ask the user when to evaluate:
+
+\small
+\begin{minted}{python}
+>>> array = np.concatenate([
+...     da.from_delayed(
+...         dask.delayed(read, pure=True)(i),
+...         (10,),
+...         np.int64,
+...     ) for i in range(10)
+... ])
+>>> another = array[:15]
+\end{minted}
+\begin{minted}{python}
+>>> another.compute()  # <--- user input
+reading 0
+reading 1
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4])
+\end{minted}
+
+\Large
+\vspace{0.5 cm}
+Awkward VirtualArrays evaluate whenever they need information.
+\end{frame}
 
 
 
