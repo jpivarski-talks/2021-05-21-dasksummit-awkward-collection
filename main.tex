@@ -424,5 +424,18 @@ A Dask DAG over kernels could be converted into a CUDA DAG.
 \end{description}
 \end{frame}
 
+\begin{frame}{In conclusion}
+\large
+\vspace{0.5 cm}
+\begin{itemize}\setlength{\itemsep}{0.5 cm}
+\item Despite \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}}, Awkward Array lacks a DAG representation, which is useful for many things.
+
+\item Dask DAGs would be a natural choice, whether internal (like xarray) or visible to users (my preference).
+
+\item Open question: which level(s) of abstraction?
+
+\item Low-level DAGs might be important for GPU performance, though a major refactoring would be necessary to make that happen.
+\end{itemize}
+\end{frame}
 
 \end{document}
