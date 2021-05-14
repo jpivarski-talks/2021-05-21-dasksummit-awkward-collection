@@ -56,9 +56,105 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{First slide}
+\begin{frame}{Dask collection types}
+\large
+
 \vspace{0.5 cm}
-HERE
+Dask has three built-in collection types: $\underbrace{\mbox{\textcolor{darkblue}{array},}}_{\mbox{NumPy}}$ $\underbrace{\mbox{\textcolor{darkblue}{dataframe\vphantom{y}},}}_{\mbox{Pandas}}$ and $\underbrace{\mbox{\textcolor{darkblue}{bag\vphantom{y}}.}}_{\mbox{Python}}$
+
+\vspace{1 cm}
+\uncover<2->{As well as hidden collection type(s): \textcolor{darkblue}{xarray} (and others?), using Dask internally.}
+\end{frame}
+
+\begin{frame}[fragile]{Awkward Array generalizes NumPy}
+\small
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+>>> a = ak.Array([[0, 1, 2], [], [3, 4], [5], [6, 7, 8, 9]])
+\end{minted}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<2->
+\begin{minted}{python}
+>>> a[:, 1:]
+<Array [[1, 2], [], [4], [], [7, 8, 9]] type='5 * var * int64'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<3->
+\begin{minted}{python}
+>>> b = ak.Array([
+...     {"z": 1.1}, {"z": 2.2}, {"z": 3.3}, {"z": 4.4}, {"z": 5.5}
+... ])
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<4->
+\begin{minted}{python}
+>>> b["z"]
+<Array [1.1, 2.2, 3.3, 4.4, 5.5] type='5 * float64'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<5->
+\begin{minted}{python}
+>>> c = ak.zip({"x": a, "y": b}); c
+<Array [[{x: 0, y: {z: 1.1}, ... y: {z: 5.5}}]] type='5 * var * {...'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<6->
+\begin{minted}{python}
+>>> np.sqrt(c.y.z)
+<Array [[1.05, 1.05, 1.05, ... 2.35, 2.35]] type='5 * var * float64'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<7->
+\begin{minted}{python}
+>>> np.sum(c.y.z, axis=0)
+<Array [14.3, 9.9, 6.6, 5.5] type='4 * float64'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<8->
+\begin{minted}{python}
+>>> np.sum(c.y.z, axis=1)
+<Array [3.3, 0, 6.6, 4.4, 22] type='5 * float64'>
+\end{minted}
+\end{uncoverenv}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Including functions that have no equivalent in NumPy}
+\small
+\vspace{-0.75 cm}
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+>>> a = ak.Array([[0, 1, 2], [], [3, 4]])
+>>> b = ak.Array([["one", "two"], ["one"], ["one"]])
+>>> ak.cartesian({"a": a, "b": b}, axis=1).tolist()
+[
+    [
+        {'a': 0, 'b': 'one'},
+        {'a': 0, 'b': 'two'},
+        {'a': 1, 'b': 'one'},
+        {'a': 1, 'b': 'two'},
+        {'a': 2, 'b': 'one'},
+        {'a': 2, 'b': 'two'},
+    ],
+    [],
+    [
+        {'a': 3, 'b': 'one'},
+        {'a': 4, 'b': 'one'},
+    ],
+]
+\end{minted}
+
+\vspace{-5.5 cm}
+\hfill\includegraphics[height=4 cm]{docs-cartesian.png}
+\end{columns}
 \end{frame}
 
 \end{document}
