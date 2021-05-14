@@ -128,7 +128,7 @@ Dask has three built-in collection types: $\underbrace{\mbox{\textcolor{darkblue
 
 \begin{frame}[fragile]{Including functions that have no equivalent in NumPy}
 \small
-\vspace{-0.75 cm}
+\vspace{-0.2 cm}
 \begin{columns}
 \column{1.05\linewidth}
 \begin{minted}{python}
@@ -152,12 +152,12 @@ Dask has three built-in collection types: $\underbrace{\mbox{\textcolor{darkblue
 ]
 \end{minted}
 
-\vspace{-5.5 cm}
-\hfill\includegraphics[height=4 cm]{docs-cartesian.png}
+\vspace{-6 cm}
+\hfill\includegraphics[height=5.5 cm]{docs-cartesian.png}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Awkward Arrays as Dask arrays?}
+\begin{frame}{Cacn Awkward Arrays be Dask arrays?}
 \Large
 It might seem like we could use \mintinline{python}{dask.array} for Awkward Arrays,
 
@@ -218,10 +218,10 @@ but\ldots
 
 \vspace{1 cm}
 
-\uncover<3->{\textcolor{darkblue}{Do physicists need a distributed array abstraction?}} \uncover<4->{\textcolor{darkorange}{\bf Arguably.}}
+\only<1-2>{\textcolor{gray}{Do physicists need a distributed array abstraction?}}\only<3->{\textcolor{darkblue}{Do physicists need a distributed array abstraction?}} \uncover<4->{\textcolor{darkorange}{\bf Arguably.}}
 \end{frame}
 
-\begin{frame}[fragile]{LHC analyses can be neatly divided into map-reduce}
+\begin{frame}[fragile]{LHC analyses can be neatly divided into MapPartition-Reduce}
 \vspace{0.25 cm}
 \small
 \begin{minted}{python}
@@ -286,7 +286,7 @@ reading 4
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Moreover, Awkward Array already has a delayed abstraction}
+\begin{frame}[fragile]{Awkward Array's delayed abstraction}
 \small
 \begin{columns}
 \column{1.05\linewidth}
@@ -297,7 +297,7 @@ reading 4
 \begin{Verbatim}[commandchars=\\\{\}]
 <\textcolor{darkgreen}{\textbf{IrregularlyPartitionedArray}}>
     <\textcolor{darkgreen}{\textbf{partition}} start="0" stop="10">
-        <\textcolor{blue}{\textbf{VirtualArray}} cache_key="ak0">
+        <\textcolor{darkorange}{\textbf{VirtualArray}} cache_key="ak0">
             <ArrayGenerator f="<function read at 0x7f...>" args="(0,)">
                 <length>10</length>
                 <form>\{
@@ -308,7 +308,7 @@ reading 4
                 \}</form>
             </ArrayGenerator>
             <ArrayCache mapping="\{\}"/>
-        </\textcolor{blue}{\textbf{VirtualArray}}>
+        </\textcolor{darkorange}{\textbf{VirtualArray}}>
     </\textcolor{darkgreen}{\textbf{partition}}>
     <\textcolor{darkgreen}{\textbf{partition}} start="10" stop="20">
         ...
@@ -316,7 +316,7 @@ reading 4
 \end{columns}
 \end{frame}
 
-\begin{frame}{Moreover, Awkward Array already has a delayed abstraction}
+\begin{frame}{Awkward Array's delayed abstraction}
 \Large
 \vspace{0.25 cm}
 \begin{columns}[t]
@@ -325,14 +325,14 @@ reading 4
 
 \vspace{0.25 cm}
 \begin{itemize}
-\item Only allowed at the top of an Awkward Array's tree structure.
+\item Only allowed at the root of an Awkward Array's tree structure.
 
 \item Partition sizes must be known.
 
 \end{itemize}
 
-\column{0.5\linewidth}
-\mbox{ } \hfill \textcolor{blue}{\underline{\tt\textbf{VirtualArray}}} \hfill \mbox{ }
+\column{0.49\linewidth}
+\mbox{ } \hfill \textcolor{darkorange}{\underline{\tt\textbf{VirtualArray}}} \hfill \mbox{ }
 
 \vspace{0.25 cm}
 \begin{itemize}
@@ -340,7 +340,7 @@ reading 4
 
 \item Form (detailed type) and length are optional, but recommended.
 
-\item Materialized and cached as soon as an operation needs more information.
+\item Materializes and caches as soon as an operation needs to know more information.
 
 \end{itemize}
 
@@ -376,8 +376,8 @@ Awkward VirtualArrays evaluate whenever they need information.
 \end{frame}
 
 \begin{frame}{Degrees of transparency}
-\vspace{1 cm}
-\includegraphics[width=\linewidth]{degrees-of-transparency.pdf}
+\vspace{0.25 cm}
+\only<1>{\includegraphics[width=\linewidth]{degrees-of-transparency.pdf}}\only<2>{\includegraphics[width=\linewidth]{degrees-of-transparency-2.pdf}}
 \end{frame}
 
 \begin{frame}{DAG for Awkward Array operations: which level of abstraction?}
@@ -393,7 +393,7 @@ Awkward VirtualArrays evaluate whenever they need information.
 \textcolor{darkblue}{\bf Mid:} DAG nodes are \mintinline{python}{ak::Content} methods.
 
 \vspace{1.2 cm}
-\uncover<2->{\textcolor{darkblue}{\bf Low:} DAG nodes are kernel function calls.}
+\uncover<2->{\textcolor{darkblue}{\bf Low:} DAG nodes are kernel functions.}
 
 \vspace{0.25 cm}
 \end{columns}
@@ -403,9 +403,26 @@ Awkward VirtualArrays evaluate whenever they need information.
 \vspace{-0.5 cm}
 \end{frame}
 
+\begin{frame}{Use-cases for a DAG}
+\large
+\vspace{0.3 cm}
+\begin{description}\setlength{\itemsep}{0.25 cm}
+\item[\bf Distributed computing] (high or mid-level): may leverage \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}} to internalize Dask, or not.
 
+\vspace{0.2 cm}
+\textcolor{gray}{It must be clear how to use Dask monitoring tools in either case.}
 
+\vspace{0.2 cm}
+\textcolor{gray}{Fusing subgraphs that are independent of event number ({\tt axis=0}) will be an important optimization.}
 
+\item[\bf Static analysis] (high or mid-level): it would be very useful to identify which fields a block of code will access, to bundle requests up-front (especially for high-latency networks).
+
+\item[\bf Streamlining GPU code] (low-level): all of the kernel functions will be ported to CUDA, but we don't want Python calls to be synchronization points between kernels.
+
+\vspace{0.2 cm}
+A Dask DAG over kernels could be converted into a CUDA DAG.
+\end{description}
+\end{frame}
 
 
 \end{document}
