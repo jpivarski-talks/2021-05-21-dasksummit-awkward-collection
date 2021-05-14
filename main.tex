@@ -176,11 +176,22 @@ but\ldots
 \begin{columns}
 \column{0.47\linewidth}
 \vspace{0.25 cm}
-\only<1>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-1.pdf}}\only<2>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-2.pdf}}
+\only<1>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-1.pdf}}\only<2->{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-2.pdf}}
 
 \column{0.55\linewidth}
+\uncover<3->{\textcolor{darkblue}{Like array:} in that the elements have a single type, rich slicing semantics, and compiled loops.}
 
+\vspace{0.25 cm}
+\uncover<3->{\textcolor{darkblue}{Unlike array:} in that the type can be nested, variable-length, nullable, and heterogeneous unions, partitioning only makes sense in 1D, includes fundamental functions beyond NumPy.}
 
+\vspace{0.25 cm}
+\uncover<4->{\textcolor{darkblue}{Like bag:} in type generality and 1D partitioning.}
+
+\vspace{0.25 cm}
+\uncover<4->{\textcolor{darkblue}{Unlike bag:} in having a single type, rich slicing, an \mintinline{python}{axis} concept, and compiled loops.}
+
+\vspace{0.25 cm}
+\uncover<5->{\textcolor{darkblue}{Unlike dataframe:} in not having an index and not having columns, apart from record fields.}
 \end{columns}
 \end{frame}
 
