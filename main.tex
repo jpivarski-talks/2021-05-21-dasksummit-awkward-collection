@@ -157,6 +157,36 @@ Dask has three built-in collection types: $\underbrace{\mbox{\textcolor{darkblue
 \end{columns}
 \end{frame}
 
+\begin{frame}{Awkward Arrays as Dask arrays?}
+\Large
+It might seem like we could use \mintinline{python}{dask.array} for Awkward Arrays,
+
+but\ldots
+
+\large
+\vspace{0.5 cm}
+\begin{itemize}\setlength{\itemsep}{0.5 cm}
+\item<2-> Awkward Arrays do not have \mintinline{python}{shape} and \mintinline{python}{dtype}, and you quickly run into Dask operations that expect them to.
+\item<3-> Dask doesn't know that \mintinline{python}{ak.*} are fundamental operations (DAG nodes), just as \mintinline{python}{np.*} are.
+\item<4-> \href{https://github.com/scikit-hep/uproot3}{\textcolor{blue}{\underline{scikit-hep/uproot3}}}'s git history is littered with attempts to make it work.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What about bags or dataframes?}
+\begin{columns}
+\column{0.47\linewidth}
+\vspace{0.25 cm}
+\only<1>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-1.pdf}}\only<2>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-2.pdf}}
+
+\column{0.55\linewidth}
+
+
+\end{columns}
+\end{frame}
+
+
+
+
 \end{document}
 
 %% from coffea import hist, processor
