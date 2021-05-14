@@ -198,7 +198,7 @@ but\ldots
 \end{columns}
 \end{frame}
 
-\begin{frame}{Fundamental question}
+\begin{frame}{The basic question}
 \Large
 
 {\it If} Awkward Arrays are to be integrated with Dask, {\it then} they need to be a new collection type.
@@ -336,7 +336,7 @@ reading 4
 
 \vspace{0.25 cm}
 \begin{itemize}
-\item Allowed anywhere in a tree structure.
+\item Allowed anywhere in a tree structure, including nested.
 
 \item Form (detailed type) and length are optional, but recommended.
 
@@ -379,5 +379,33 @@ Awkward VirtualArrays evaluate whenever they need information.
 \vspace{1 cm}
 \includegraphics[width=\linewidth]{degrees-of-transparency.pdf}
 \end{frame}
+
+\begin{frame}{DAG for Awkward Array operations: which level of abstraction?}
+\vspace{0.5 cm}
+\begin{columns}
+\column{0.7\linewidth}
+\only<1>{\includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}}\only<2>{\includegraphics[width=\linewidth]{awkward-1-0-layers-modified.pdf}}
+
+\column{0.3\linewidth}
+\textcolor{darkblue}{\bf High:} DAG nodes are \mintinline{python}{ak.*} functions.
+
+\vspace{0.75 cm}
+\textcolor{darkblue}{\bf Mid:} DAG nodes are \mintinline{python}{ak::Content} methods.
+
+\vspace{1.2 cm}
+\uncover<2->{\textcolor{darkblue}{\bf Low:} DAG nodes are kernel function calls.}
+
+\vspace{0.25 cm}
+\end{columns}
+
+\vspace{0.5 cm}
+\large \uncover<2->{Low-level DAG would only be possible if the mid level is ported from C++ to Python, which is under consideration for other reasons.}
+\vspace{-0.5 cm}
+\end{frame}
+
+
+
+
+
 
 \end{document}
