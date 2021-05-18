@@ -56,391 +56,538 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{Dask collection types}
-\large
-
-\vspace{0.5 cm}
-Dask has three built-in collection types: $\underbrace{\mbox{\textcolor{darkblue}{array},}}_{\mbox{NumPy}}$ $\underbrace{\mbox{\textcolor{darkblue}{dataframe\vphantom{y}},}}_{\mbox{Pandas}}$ and $\underbrace{\mbox{\textcolor{darkblue}{bag\vphantom{y}}.}}_{\mbox{Python}}$
-
-\vspace{1 cm}
-\uncover<2->{As well as hidden collection type(s): \textcolor{darkblue}{xarray} (and others?), using Dask internally.}
-\end{frame}
-
-\begin{frame}{\href{https://awkward-array.org}{https://awkward-array.org}}
-\vspace{0.5 cm}
-\includegraphics[width=\linewidth]{awkward-array-org.png}
-\end{frame}
-
-\begin{frame}[fragile]{Awkward Array generalizes NumPy}
-\small
-\begin{columns}
-\column{1.05\linewidth}
-\begin{minted}{python}
->>> a = ak.Array([[0, 1, 2], [], [3, 4], [5], [6, 7, 8, 9]])
-\end{minted}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<2->
-\begin{minted}{python}
->>> a[:, 1:]
-<Array [[1, 2], [], [4], [], [7, 8, 9]] type='5 * var * int64'>
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<3->
-\begin{minted}{python}
->>> b = ak.Array([
-...     {"z": 1.1}, {"z": 2.2}, {"z": 3.3}, {"z": 4.4}, {"z": 5.5}
-... ])
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<4->
-\begin{minted}{python}
->>> b["z"]
-<Array [1.1, 2.2, 3.3, 4.4, 5.5] type='5 * float64'>
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<5->
-\begin{minted}{python}
->>> c = ak.zip({"x": a, "y": b}); c
-<Array [[{x: 0, y: {z: 1.1}, ... y: {z: 5.5}}]] type='5 * var * {...'>
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<6->
-\begin{minted}{python}
->>> np.sqrt(c.y.z)
-<Array [[1.05, 1.05, 1.05, ... 2.35, 2.35]] type='5 * var * float64'>
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<7->
-\begin{minted}{python}
->>> np.sum(c.y.z, axis=0)
-<Array [14.3, 9.9, 6.6, 5.5] type='4 * float64'>
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<8->
-\begin{minted}{python}
->>> np.sum(c.y.z, axis=1)
-<Array [3.3, 0, 6.6, 4.4, 22] type='5 * float64'>
-\end{minted}
-\end{uncoverenv}
-\end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Including functions that have no equivalent in NumPy}
-\small
-\vspace{-0.2 cm}
-\begin{columns}
-\column{1.05\linewidth}
-\begin{minted}{python}
->>> a = ak.Array([[0, 1, 2], [], [3, 4]])
->>> b = ak.Array([["one", "two"], ["one"], ["one"]])
->>> ak.cartesian({"a": a, "b": b}, axis=1).tolist()
-[
-    [
-        {'a': 0, 'b': 'one'},
-        {'a': 0, 'b': 'two'},
-        {'a': 1, 'b': 'one'},
-        {'a': 1, 'b': 'two'},
-        {'a': 2, 'b': 'one'},
-        {'a': 2, 'b': 'two'},
-    ],
-    [],
-    [
-        {'a': 3, 'b': 'one'},
-        {'a': 4, 'b': 'one'},
-    ],
-]
-\end{minted}
-
-\vspace{-6 cm}
-\hfill\includegraphics[height=5.5 cm]{docs-cartesian.png}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Cacn Awkward Arrays be Dask arrays?}
+\begin{frame}{Motivation: particle physics analysis}
 \Large
-It might seem like we could use \mintinline{python}{dask.array} for Awkward Arrays,
-
-but\ldots
-
-\large
-\vspace{0.5 cm}
-\begin{itemize}\setlength{\itemsep}{0.5 cm}
-\item<2-> Awkward Arrays do not have \mintinline{python}{shape} and \mintinline{python}{dtype}, and you quickly run into Dask operations that expect them to.
-\item<3-> Dask doesn't know that \mintinline{python}{ak.*} are fundamental operations (DAG nodes), just as \mintinline{python}{np.*} are.
-\item<4-> \href{https://github.com/scikit-hep/uproot3}{\textcolor{blue}{\underline{scikit-hep/uproot3}}}'s git history is littered with attempts to make it work.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{What about bags or dataframes?}
+\vspace{0.35 cm}
 \begin{columns}
-\column{0.47\linewidth}
-\vspace{0.25 cm}
-\only<1>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-1.pdf}}\only<2->{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-2.pdf}}
-
+\column{0.48\linewidth}
+\only<1>{\includegraphics[width=\linewidth]{omega-minus-1.png}}\only<2->{\includegraphics[width=\linewidth]{omega-minus-2.png}}
 \column{0.55\linewidth}
-\uncover<3->{\textcolor{darkblue}{Like array:} in that the elements have a single type, rich slicing semantics, and compiled loops.}
 
-\vspace{0.25 cm}
-\uncover<3->{\textcolor{darkblue}{Unlike array:} in that the type can be nested, variable-length, nullable, and heterogeneous unions, partitioning only makes sense in 1D, includes fundamental functions beyond NumPy.}
-
-\vspace{0.25 cm}
-\uncover<4->{\textcolor{darkblue}{Like bag:} in type generality and 1D partitioning.}
-
-\vspace{0.25 cm}
-\uncover<4->{\textcolor{darkblue}{Unlike bag:} in having a single type, rich slicing, an \mintinline{python}{axis} concept, and compiled loops.}
-
-\vspace{0.25 cm}
-\uncover<5->{\textcolor{darkblue}{Unlike dataframe:} in not having an index and not having columns, apart from record fields.}
-
-\vspace{0.25 cm}
-\uncover<6->{\textcolor{darkorange}{\bf Somewhere between an array and a bag.}}
-\end{columns}
-\end{frame}
-
-\begin{frame}{The basic question}
-\Large
-
-{\it If} Awkward Arrays are to be integrated with Dask, {\it then} they need to be a new collection type.
-
-\vspace{1 cm}
-\uncover<2->{\textcolor{darkblue}{But do we really need Awkward Dask arrays?}}
-\end{frame}
-
-\begin{frame}{Specifically, for particle physics}
-\Large
-
-\textcolor{darkblue}{Do physicists need out-of-core datasets?} \uncover<2->{\textcolor{darkorange}{\bf Yes!}}
-
-\uncover<2->{\phantom{Do physicists need out-of-core datasets?} typical RAM = 10~GB}
-
-\uncover<2->{\phantom{Do physicists need out-of-core datasets?} typical analysis = 10~TB}
-
-\vspace{1 cm}
-
-\only<1-2>{\textcolor{gray}{Do physicists need a distributed array abstraction?}}\only<3->{\textcolor{darkblue}{Do physicists need a distributed array abstraction?}} \uncover<4->{\textcolor{darkorange}{\bf Arguably.}}
-\end{frame}
-
-\begin{frame}[fragile]{LHC analyses can be neatly divided into MapPartition-Reduce}
-\vspace{0.25 cm}
-\small
-\begin{minted}{python}
-import coffea
-
-class MyAnalysis(coffea.processor.ProcessorABC):
-    def __init__(self, **parameters):
-        self.parameters = parameters
-        self.accumulator = ... # histograms
-
-    def process(self, df):
-        output = self.accumulator.identity()
-        # analyze one partition of data, filling histograms...
-        return output
-
-    def postprocess(self, accumulator):
-        # final touches on combined histograms, like scaling...
-        return accumulator
-
-analysis = MyAnalysis(parameter1=...)  # run with a Dask scheduler
-\end{minted}
-\end{frame}
-
-\begin{frame}[fragile]{Moreover, Awkward Array already has a delayed abstraction}
-\small
-\begin{columns}
-\column{1.05\linewidth}
-\begin{minted}{python}
->>> def read(i):
-...     print("reading", i)
-...     return ak.Array(range(10))
-... 
->>> form = ak.forms.Form.from_numpy(np.dtype(np.int64))
->>> array = ak.partitioned([
-...     ak.virtual(read, (i,), form=form, length=10) for i in range(5)
-... ])
-\end{minted}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<2->
-\begin{minted}{python}
->>> array[:5]
-reading 0
-<Array [0, 1, 2, 3, 4] type='5 * int64'>
-\end{minted}
-\end{uncoverenv}
-\begin{uncoverenv}<3->
-\vspace{-0.3 cm}
-\begin{minted}{python}
->>> array[:15]
-reading 1
-<Array [0, 1, 2, 3, 4, 5, ... 9, 0, 1, 2, 3, 4] type='15 * int64'>
-\end{minted}
-\end{uncoverenv}
-\vspace{-0.3 cm}
-\begin{uncoverenv}<4->
-\begin{minted}{python}
->>> array
-reading 4
-<Array [0, 1, 2, 3, 4, 5, ... 4, 5, 6, 7, 8, 9] type='50 * int64'>
-\end{minted}
-\end{uncoverenv}
-\end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Awkward Array's delayed abstraction}
-\small
-\begin{columns}
-\column{1.05\linewidth}
-\begin{minted}{python}
->>> array.layout
-\end{minted}
-\vspace{-0.4 cm}
-\begin{Verbatim}[commandchars=\\\{\}]
-<\textcolor{darkgreen}{\textbf{IrregularlyPartitionedArray}}>
-    <\textcolor{darkgreen}{\textbf{partition}} start="0" stop="10">
-        <\textcolor{darkorange}{\textbf{VirtualArray}} cache_key="ak0">
-            <ArrayGenerator f="<function read at 0x7f...>" args="(0,)">
-                <length>10</length>
-                <form>\{
-                    "class": "NumpyArray",
-                    "itemsize": 8,
-                    "format": "l",
-                    "primitive": "int64"
-                \}</form>
-            </ArrayGenerator>
-            <ArrayCache mapping="\{\}"/>
-        </\textcolor{darkorange}{\textbf{VirtualArray}}>
-    </\textcolor{darkgreen}{\textbf{partition}}>
-    <\textcolor{darkgreen}{\textbf{partition}} start="10" stop="20">
-        ...
-\end{Verbatim}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Awkward Array's delayed abstraction}
-\Large
-\vspace{0.25 cm}
-\begin{columns}[t]
-\column{0.55\linewidth}
-\mbox{ } \hfill \textcolor{darkgreen}{\underline{\tt\textbf{PartitionedArray}}} \hfill \mbox{ }
-
-\vspace{0.25 cm}
-\begin{itemize}
-\item Only allowed at the root of an Awkward Array's tree structure.
-
-\item Partition sizes must be known.
-
-\end{itemize}
-
-\column{0.49\linewidth}
-\mbox{ } \hfill \textcolor{darkorange}{\underline{\tt\textbf{VirtualArray}}} \hfill \mbox{ }
-
-\vspace{0.25 cm}
-\begin{itemize}
-\item Allowed anywhere in a tree structure, including nested.
-
-\item Form (detailed type) and length are optional, but recommended.
-
-\item Materializes and caches as soon as an operation needs to know more information.
-
-\end{itemize}
-
-\end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Fundamental difference between VirtualArrays and Dask arrays}
-\Large
-\vspace{0.25 cm}
-Dask arrays ask the user when to evaluate:
-
-\small
-\begin{minted}{python}
->>> array = np.concatenate([
-...     da.from_delayed(
-...         dask.delayed(read, pure=True)(i),
-...         shape=(10,),
-...         dtype=np.dtype(np.int64),
-...     ) for i in range(5)
-... ])
->>> another = array[:15]
-\end{minted}
-\begin{minted}{python}
->>> another.compute()  # <--- user input
-reading 0
-reading 1
-array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4])
-\end{minted}
-
-\Large
-\vspace{0.5 cm}
-Awkward VirtualArrays evaluate whenever they need information.
-\end{frame}
-
-\begin{frame}{Degrees of transparency}
-\vspace{0.25 cm}
-\only<1>{\includegraphics[width=\linewidth]{degrees-of-transparency.pdf}}\only<2>{\includegraphics[width=\linewidth]{degrees-of-transparency-2.pdf}}
-\end{frame}
-
-\begin{frame}{DAG for Awkward Array operations: which level of abstraction?}
-\vspace{0.5 cm}
-\begin{columns}
-\column{0.7\linewidth}
-\only<1>{\includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}}\only<2>{\includegraphics[width=\linewidth]{awkward-1-0-layers-modified.pdf}}
-
-\column{0.3\linewidth}
-\textcolor{darkblue}{\bf High:} DAG nodes are \mintinline{python}{ak.*} functions.
-
-\vspace{0.75 cm}
-\textcolor{darkblue}{\bf Mid:} DAG nodes are \mintinline{python}{ak::Content} methods.
-
-\vspace{1.2 cm}
-\uncover<2->{\textcolor{darkblue}{\bf Low:} DAG nodes are kernel functions.}
-
-\vspace{0.25 cm}
-\end{columns}
-
-\vspace{0.5 cm}
-\large \uncover<2->{Low-level DAG would only be possible if the mid level is ported from C++ to Python, which is under consideration for other reasons.}
+\begin{center}
+\begin{onlyenv}<1>
 \vspace{-0.5 cm}
-\end{frame}
+This is a photo of subatomic particles leaving tracks in a detector.
 
-\begin{frame}{Use-cases for a DAG}
-\large
-\vspace{0.3 cm}
-\begin{description}\setlength{\itemsep}{0.25 cm}
-\item[\bf Distributed computing] (high or mid-level): may leverage \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}} to internalize Dask, or not.
-
-\vspace{0.2 cm}
-\textcolor{gray}{It must be clear how to use Dask monitoring tools in either case.}
-
-\vspace{0.2 cm}
-\textcolor{gray}{Fusing subgraphs that are independent of event number ({\tt axis=0}) will be an important optimization.}
-
-\item[\bf Static analysis] (high or mid-level): it would be very useful to identify which fields a block of code will access, to bundle requests up-front (especially for high-latency networks).
-
-\item[\bf Streamlining GPU code] (low-level): all of the kernel functions will be ported to CUDA, but we don't want Python calls to be synchronization points between kernels.
-
-\vspace{0.2 cm}
-A Dask DAG over kernels could be converted into a CUDA DAG.
-\end{description}
-\end{frame}
-
-\begin{frame}{In conclusion}
-\large
 \vspace{0.5 cm}
-\begin{itemize}\setlength{\itemsep}{0.5 cm}
-\item Despite \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}}, Awkward Array lacks a DAG representation, which is useful for many things.
+In 1964, a group at Berkeley scanned 100,000 photos to find this one: the discovery of the $\Omega$ baryon.
 
-\item Dask DAGs would be a natural choice, whether internal (like xarray) or visible to users (my preference).
+\vspace{0.5 cm}
+Do you see it?
+\end{onlyenv}\begin{onlyenv}<2>
+\vspace{-0.5 cm}
+How about now?
 
-\item Open question: which level(s) of abstraction?
+\vspace{0.5 cm}
+\includegraphics[width=\linewidth]{decay-chain.png}
+%% \begin{align*}
+%% K^- + p & \to \Omega^- + K^+ + K^0 \\
+%% \Omega^- & \to \Xi^0 + \pi^- \\
+%% \Xi^0 & \to \Lambda^0 + \pi^0 \\
+%% \Lambda^0 & \to p + \pi^- \\
+%% \pi^0 & \to \gamma + \gamma
+%% \end{align*}
 
-\item Low-level DAGs might be important for GPU performance, though a major refactoring would be necessary to make that happen.
-\end{itemize}
+\end{onlyenv}\begin{onlyenv}<3>
+This is what particle physicists do: collide particles, produce new ones and take pictures of the decays.
+
+\vspace{1 cm}
+However, these pictures come to us unlabeled: lots of interactions overlap the ``interesting'' ones.
+
+\vspace{1 cm}
+\end{onlyenv}
+\end{center}
+
+\end{columns}
 \end{frame}
+
+\begin{frame}{}
+\begin{columns}
+\column{1.15\linewidth}
+\includegraphics[width=\linewidth]{090324_ALICE-hirez.jpg}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Modern particle physics scales this up}
+\vspace{0.15 cm}
+\begin{columns}
+\column{0.33\linewidth}
+\includegraphics[width=\linewidth]{H4000010-Team_that_discovered_Omega_minus_particle.jpg}
+
+\column{0.5\linewidth}
+\begin{center}
+\begin{columns}
+\column{0.35\linewidth}
+\centering
+\vspace{-1 cm}
+
+photographs
+
+\vspace{\baselineskip}
+\vspace{0.5 cm}
+100,000 events
+
+\vspace{0.5 cm}
+manual/semi-automated scans
+
+\vspace{\baselineskip}
+\vspace{0.5 cm}
+30 authors
+
+\column{0.35\linewidth}
+\centering
+\vspace{-1 cm}
+
+digitized signals \\
+
+\vspace{0.5 cm}
+$\sim$trillion events \\
+
+\vspace{0.5 cm}
+algorithmic searches and machine learning
+
+\vspace{0.5 cm}
+3,000 authors
+\end{columns}
+\end{center}
+
+\column{0.33\linewidth}
+\includegraphics[width=\linewidth]{cms25_2.jpg}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Combinatorics of many variable-length collections is crucial}
+\vspace{0.25 cm}
+For each of the trillions of events, use its observed $e^\pm$, $\pi^\pm$, and $p$/$\bar{p}$ tracks to\ldots
+
+\vspace{0.25 cm}
+\begin{columns}
+\column{0.01\linewidth}
+
+\column{0.5\linewidth}
+\includegraphics[width=\linewidth]{decay-chain.png}
+
+\column{0.5\linewidth}
+Find opposite-sign pairs of electrons ($e^\pm$) consistent with photon ($\gamma$) conversions.
+
+\vspace{0.35 cm}
+Find pairs of those pairs consistent with a $\pi^0$ decay.
+
+\vspace{0.35 cm}
+Find a $\pi^-$ track and a $p$ track consistent with a $\Lambda^0$ decay.
+
+\vspace{0.35 cm}
+Combine the above $\Lambda^0$ and $\pi^0$ candidates into a $\Xi^0$ candidate.
+
+\vspace{0.35 cm}
+Combine the $\Xi^0$ candidate and a $pi^-$ track to reconstruct an $\Omega^-$.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Combinatorics of many variable-length collections is crucial}
+\Large
+\vspace{0.25 cm}
+Each of those events has a different number of each type of particle.
+
+\vspace{0.25 cm}
+Not reducible to a flat table without padding and/or loss.
+
+\vspace{0.5 cm}
+\begin{columns}[b]
+\column{0.5\linewidth}
+\mbox{ } \hfill \includegraphics[width=0.9\linewidth]{muons-as-objects-2.png} \hfill \mbox{ }
+
+\column{0.5\linewidth}
+\includegraphics[width=\linewidth]{muons-as-a-table.png}
+\end{columns}
+\end{frame}
+
+
+%% \begin{frame}{Dask collection types}
+%% \large
+
+%% \vspace{0.5 cm}
+%% Dask has three built-in collection types: $\underbrace{\mbox{\textcolor{darkblue}{array},}}_{\mbox{NumPy}}$ $\underbrace{\mbox{\textcolor{darkblue}{dataframe\vphantom{y}},}}_{\mbox{Pandas}}$ and $\underbrace{\mbox{\textcolor{darkblue}{bag\vphantom{y}}.}}_{\mbox{Python}}$
+
+%% \vspace{1 cm}
+%% \uncover<2->{As well as hidden collection type(s): \textcolor{darkblue}{xarray} (and others?), using Dask internally.}
+%% \end{frame}
+
+%% \begin{frame}{\href{https://awkward-array.org}{https://awkward-array.org}}
+%% \vspace{0.5 cm}
+%% \includegraphics[width=\linewidth]{awkward-array-org.png}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Awkward Array generalizes NumPy}
+%% \small
+%% \begin{columns}
+%% \column{1.05\linewidth}
+%% \begin{minted}{python}
+%% >>> a = ak.Array([[0, 1, 2], [], [3, 4], [5], [6, 7, 8, 9]])
+%% \end{minted}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<2->
+%% \begin{minted}{python}
+%% >>> a[:, 1:]
+%% <Array [[1, 2], [], [4], [], [7, 8, 9]] type='5 * var * int64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<3->
+%% \begin{minted}{python}
+%% >>> b = ak.Array([
+%% ...     {"z": 1.1}, {"z": 2.2}, {"z": 3.3}, {"z": 4.4}, {"z": 5.5}
+%% ... ])
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<4->
+%% \begin{minted}{python}
+%% >>> b["z"]
+%% <Array [1.1, 2.2, 3.3, 4.4, 5.5] type='5 * float64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<5->
+%% \begin{minted}{python}
+%% >>> c = ak.zip({"x": a, "y": b}); c
+%% <Array [[{x: 0, y: {z: 1.1}, ... y: {z: 5.5}}]] type='5 * var * {...'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<6->
+%% \begin{minted}{python}
+%% >>> np.sqrt(c.y.z)
+%% <Array [[1.05, 1.05, 1.05, ... 2.35, 2.35]] type='5 * var * float64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<7->
+%% \begin{minted}{python}
+%% >>> np.sum(c.y.z, axis=0)
+%% <Array [14.3, 9.9, 6.6, 5.5] type='4 * float64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<8->
+%% \begin{minted}{python}
+%% >>> np.sum(c.y.z, axis=1)
+%% <Array [3.3, 0, 6.6, 4.4, 22] type='5 * float64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Including functions that have no equivalent in NumPy}
+%% \small
+%% \vspace{-0.2 cm}
+%% \begin{columns}
+%% \column{1.05\linewidth}
+%% \begin{minted}{python}
+%% >>> a = ak.Array([[0, 1, 2], [], [3, 4]])
+%% >>> b = ak.Array([["one", "two"], ["one"], ["one"]])
+%% >>> ak.cartesian({"a": a, "b": b}, axis=1).tolist()
+%% [
+%%     [
+%%         {'a': 0, 'b': 'one'},
+%%         {'a': 0, 'b': 'two'},
+%%         {'a': 1, 'b': 'one'},
+%%         {'a': 1, 'b': 'two'},
+%%         {'a': 2, 'b': 'one'},
+%%         {'a': 2, 'b': 'two'},
+%%     ],
+%%     [],
+%%     [
+%%         {'a': 3, 'b': 'one'},
+%%         {'a': 4, 'b': 'one'},
+%%     ],
+%% ]
+%% \end{minted}
+
+%% \vspace{-6 cm}
+%% \hfill\includegraphics[height=5.5 cm]{docs-cartesian.png}
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}{Cacn Awkward Arrays be Dask arrays?}
+%% \Large
+%% It might seem like we could use \mintinline{python}{dask.array} for Awkward Arrays,
+
+%% but\ldots
+
+%% \large
+%% \vspace{0.5 cm}
+%% \begin{itemize}\setlength{\itemsep}{0.5 cm}
+%% \item<2-> Awkward Arrays do not have \mintinline{python}{shape} and \mintinline{python}{dtype}, and you quickly run into Dask operations that expect them to.
+%% \item<3-> Dask doesn't know that \mintinline{python}{ak.*} are fundamental operations (DAG nodes), just as \mintinline{python}{np.*} are.
+%% \item<4-> \href{https://github.com/scikit-hep/uproot3}{\textcolor{blue}{\underline{scikit-hep/uproot3}}}'s git history is littered with attempts to make it work.
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}{What about bags or dataframes?}
+%% \begin{columns}
+%% \column{0.47\linewidth}
+%% \vspace{0.25 cm}
+%% \only<1>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-1.pdf}}\only<2->{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-2.pdf}}
+
+%% \column{0.55\linewidth}
+%% \uncover<3->{\textcolor{darkblue}{Like array:} in that the elements have a single type, rich slicing semantics, and compiled loops.}
+
+%% \vspace{0.25 cm}
+%% \uncover<3->{\textcolor{darkblue}{Unlike array:} in that the type can be nested, variable-length, nullable, and heterogeneous unions, partitioning only makes sense in 1D, includes fundamental functions beyond NumPy.}
+
+%% \vspace{0.25 cm}
+%% \uncover<4->{\textcolor{darkblue}{Like bag:} in type generality and 1D partitioning.}
+
+%% \vspace{0.25 cm}
+%% \uncover<4->{\textcolor{darkblue}{Unlike bag:} in having a single type, rich slicing, an \mintinline{python}{axis} concept, and compiled loops.}
+
+%% \vspace{0.25 cm}
+%% \uncover<5->{\textcolor{darkblue}{Unlike dataframe:} in not having an index and not having columns, apart from record fields.}
+
+%% \vspace{0.25 cm}
+%% \uncover<6->{\textcolor{darkorange}{\bf Somewhere between an array and a bag.}}
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}{The basic question}
+%% \Large
+
+%% {\it If} Awkward Arrays are to be integrated with Dask, {\it then} they need to be a new collection type.
+
+%% \vspace{1 cm}
+%% \uncover<2->{\textcolor{darkblue}{But do we really need Awkward Dask arrays?}}
+%% \end{frame}
+
+%% \begin{frame}{Specifically, for particle physics}
+%% \Large
+
+%% \textcolor{darkblue}{Do physicists need out-of-core datasets?} \uncover<2->{\textcolor{darkorange}{\bf Yes!}}
+
+%% \uncover<2->{\phantom{Do physicists need out-of-core datasets?} typical RAM = 10~GB}
+
+%% \uncover<2->{\phantom{Do physicists need out-of-core datasets?} typical analysis = 10~TB}
+
+%% \vspace{1 cm}
+
+%% \only<1-2>{\textcolor{gray}{Do physicists need a distributed array abstraction?}}\only<3->{\textcolor{darkblue}{Do physicists need a distributed array abstraction?}} \uncover<4->{\textcolor{darkorange}{\bf Arguably.}}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{LHC analyses can be neatly divided into MapPartition-Reduce}
+%% \vspace{0.25 cm}
+%% \small
+%% \begin{minted}{python}
+%% import coffea
+
+%% class MyAnalysis(coffea.processor.ProcessorABC):
+%%     def __init__(self, **parameters):
+%%         self.parameters = parameters
+%%         self.accumulator = ... # histograms
+
+%%     def process(self, df):
+%%         output = self.accumulator.identity()
+%%         # analyze one partition of data, filling histograms...
+%%         return output
+
+%%     def postprocess(self, accumulator):
+%%         # final touches on combined histograms, like scaling...
+%%         return accumulator
+
+%% analysis = MyAnalysis(parameter1=...)  # run with a Dask scheduler
+%% \end{minted}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Moreover, Awkward Array already has a delayed abstraction}
+%% \small
+%% \begin{columns}
+%% \column{1.05\linewidth}
+%% \begin{minted}{python}
+%% >>> def read(i):
+%% ...     print("reading", i)
+%% ...     return ak.Array(range(10))
+%% ... 
+%% >>> form = ak.forms.Form.from_numpy(np.dtype(np.int64))
+%% >>> array = ak.partitioned([
+%% ...     ak.virtual(read, (i,), form=form, length=10) for i in range(5)
+%% ... ])
+%% \end{minted}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<2->
+%% \begin{minted}{python}
+%% >>> array[:5]
+%% reading 0
+%% <Array [0, 1, 2, 3, 4] type='5 * int64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \begin{uncoverenv}<3->
+%% \vspace{-0.3 cm}
+%% \begin{minted}{python}
+%% >>> array[:15]
+%% reading 1
+%% <Array [0, 1, 2, 3, 4, 5, ... 9, 0, 1, 2, 3, 4] type='15 * int64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \vspace{-0.3 cm}
+%% \begin{uncoverenv}<4->
+%% \begin{minted}{python}
+%% >>> array
+%% reading 4
+%% <Array [0, 1, 2, 3, 4, 5, ... 4, 5, 6, 7, 8, 9] type='50 * int64'>
+%% \end{minted}
+%% \end{uncoverenv}
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Awkward Array's delayed abstraction}
+%% \small
+%% \begin{columns}
+%% \column{1.05\linewidth}
+%% \begin{minted}{python}
+%% >>> array.layout
+%% \end{minted}
+%% \vspace{-0.4 cm}
+%% \begin{Verbatim}[commandchars=\\\{\}]
+%% <\textcolor{darkgreen}{\textbf{IrregularlyPartitionedArray}}>
+%%     <\textcolor{darkgreen}{\textbf{partition}} start="0" stop="10">
+%%         <\textcolor{darkorange}{\textbf{VirtualArray}} cache_key="ak0">
+%%             <ArrayGenerator f="<function read at 0x7f...>" args="(0,)">
+%%                 <length>10</length>
+%%                 <form>\{
+%%                     "class": "NumpyArray",
+%%                     "itemsize": 8,
+%%                     "format": "l",
+%%                     "primitive": "int64"
+%%                 \}</form>
+%%             </ArrayGenerator>
+%%             <ArrayCache mapping="\{\}"/>
+%%         </\textcolor{darkorange}{\textbf{VirtualArray}}>
+%%     </\textcolor{darkgreen}{\textbf{partition}}>
+%%     <\textcolor{darkgreen}{\textbf{partition}} start="10" stop="20">
+%%         ...
+%% \end{Verbatim}
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}{Awkward Array's delayed abstraction}
+%% \Large
+%% \vspace{0.25 cm}
+%% \begin{columns}[t]
+%% \column{0.55\linewidth}
+%% \mbox{ } \hfill \textcolor{darkgreen}{\underline{\tt\textbf{PartitionedArray}}} \hfill \mbox{ }
+
+%% \vspace{0.25 cm}
+%% \begin{itemize}
+%% \item Only allowed at the root of an Awkward Array's tree structure.
+
+%% \item Partition sizes must be known.
+
+%% \end{itemize}
+
+%% \column{0.49\linewidth}
+%% \mbox{ } \hfill \textcolor{darkorange}{\underline{\tt\textbf{VirtualArray}}} \hfill \mbox{ }
+
+%% \vspace{0.25 cm}
+%% \begin{itemize}
+%% \item Allowed anywhere in a tree structure, including nested.
+
+%% \item Form (detailed type) and length are optional, but recommended.
+
+%% \item Materializes and caches as soon as an operation needs to know more information.
+
+%% \end{itemize}
+
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Fundamental difference between VirtualArrays and Dask arrays}
+%% \Large
+%% \vspace{0.25 cm}
+%% Dask arrays ask the user when to evaluate:
+
+%% \small
+%% \begin{minted}{python}
+%% >>> array = np.concatenate([
+%% ...     da.from_delayed(
+%% ...         dask.delayed(read, pure=True)(i),
+%% ...         shape=(10,),
+%% ...         dtype=np.dtype(np.int64),
+%% ...     ) for i in range(5)
+%% ... ])
+%% >>> another = array[:15]
+%% \end{minted}
+%% \begin{minted}{python}
+%% >>> another.compute()  # <--- user input
+%% reading 0
+%% reading 1
+%% array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4])
+%% \end{minted}
+
+%% \Large
+%% \vspace{0.5 cm}
+%% Awkward VirtualArrays evaluate whenever they need information.
+%% \end{frame}
+
+%% \begin{frame}{Degrees of transparency}
+%% \vspace{0.25 cm}
+%% \only<1>{\includegraphics[width=\linewidth]{degrees-of-transparency.pdf}}\only<2>{\includegraphics[width=\linewidth]{degrees-of-transparency-2.pdf}}
+%% \end{frame}
+
+%% \begin{frame}{DAG for Awkward Array operations: which level of abstraction?}
+%% \vspace{0.5 cm}
+%% \begin{columns}
+%% \column{0.7\linewidth}
+%% \only<1>{\includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}}\only<2>{\includegraphics[width=\linewidth]{awkward-1-0-layers-modified.pdf}}
+
+%% \column{0.3\linewidth}
+%% \textcolor{darkblue}{\bf High:} DAG nodes are \mintinline{python}{ak.*} functions.
+
+%% \vspace{0.75 cm}
+%% \textcolor{darkblue}{\bf Mid:} DAG nodes are \mintinline{python}{ak::Content} methods.
+
+%% \vspace{1.2 cm}
+%% \uncover<2->{\textcolor{darkblue}{\bf Low:} DAG nodes are kernel functions.}
+
+%% \vspace{0.25 cm}
+%% \end{columns}
+
+%% \vspace{0.5 cm}
+%% \large \uncover<2->{Low-level DAG would only be possible if the mid level is ported from C++ to Python, which is under consideration for other reasons.}
+%% \vspace{-0.5 cm}
+%% \end{frame}
+
+%% \begin{frame}{Use-cases for a DAG}
+%% \large
+%% \vspace{0.3 cm}
+%% \begin{description}\setlength{\itemsep}{0.25 cm}
+%% \item[\bf Distributed computing] (high or mid-level): may leverage \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}} to internalize Dask, or not.
+
+%% \vspace{0.2 cm}
+%% \textcolor{gray}{It must be clear how to use Dask monitoring tools in either case.}
+
+%% \vspace{0.2 cm}
+%% \textcolor{gray}{Fusing subgraphs that are independent of event number ({\tt axis=0}) will be an important optimization.}
+
+%% \item[\bf Static analysis] (high or mid-level): it would be very useful to identify which fields a block of code will access, to bundle requests up-front (especially for high-latency networks).
+
+%% \item[\bf Streamlining GPU code] (low-level): all of the kernel functions will be ported to CUDA, but we don't want Python calls to be synchronization points between kernels.
+
+%% \vspace{0.2 cm}
+%% A Dask DAG over kernels could be converted into a CUDA DAG.
+%% \end{description}
+%% \end{frame}
+
+%% \begin{frame}{In conclusion}
+%% \large
+%% \vspace{0.5 cm}
+%% \begin{itemize}\setlength{\itemsep}{0.5 cm}
+%% \item Despite \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}}, Awkward Array lacks a DAG representation, which is useful for many things.
+
+%% \item Dask DAGs would be a natural choice, whether internal (like xarray) or visible to users (my preference).
+
+%% \item Open question: which level(s) of abstraction?
+
+%% \item Low-level DAGs might be important for GPU performance, though a major refactoring would be necessary to make that happen.
+%% \end{itemize}
+%% \end{frame}
 
 \end{document}
