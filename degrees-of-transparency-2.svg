@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="181.46542mm"
-   height="70.142609mm"
-   viewBox="0 0 181.46542 70.142609"
+   width="188.32277mm"
+   height="74.197098mm"
+   viewBox="0 0 188.32276 74.197098"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
@@ -42,8 +42,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="408.00997"
-     inkscape:cy="63.3288"
+     inkscape:cx="281.42753"
+     inkscape:cy="67.61449"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -52,9 +52,9 @@
      fit-margin-right="5"
      fit-margin-bottom="5"
      inkscape:window-width="1920"
-     inkscape:window-height="1136"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-height="1043"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -72,7 +72,23 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-72.263151,-144.0181)">
+     transform="translate(-65.405797,-139.96361)">
+    <ellipse
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path861"
+       cx="182.32043"
+       cy="215.49803"
+       rx="23.529018"
+       ry="15.723262"
+       transform="rotate(-12.704281)" />
+    <ellipse
+       transform="rotate(-8.7454076)"
+       ry="17.11887"
+       rx="28.92878"
+       cy="185.87424"
+       cx="71.958466"
+       id="ellipse877"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.10000002;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -130,27 +146,22 @@
          x="99.407639"
          y="166.59822"
          style="line-height:1.10000002;stroke-width:0.26458332"
-         id="tspan861">Coffea and</tspan><tspan
+         id="tspan872">Coffea and Uproot</tspan><tspan
          sodipodi:role="line"
          x="99.407639"
          y="172.80711"
          style="line-height:1.10000002;stroke-width:0.26458332"
-         id="tspan872">uproot.iterate</tspan><tspan
+         id="tspan866">users work on</tspan><tspan
          sodipodi:role="line"
          x="99.407639"
          y="179.01601"
          style="line-height:1.10000002;stroke-width:0.26458332"
-         id="tspan865">users explicitly</tspan><tspan
+         id="tspan858">one partition</tspan><tspan
          sodipodi:role="line"
          x="99.407639"
          y="185.22488"
          style="line-height:1.10000002;stroke-width:0.26458332"
-         id="tspan878">work on one</tspan><tspan
-         sodipodi:role="line"
-         x="99.407639"
-         y="191.43378"
-         style="line-height:1.10000002;stroke-width:0.26458332"
-         id="tspan867">partition.</tspan></text>
+         id="tspan875">at a time.</tspan></text>
     <path
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.52899998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
        d="M 77.263151,200.61608 H 247.54143"
@@ -167,34 +178,52 @@
          x="162.93181"
          y="207.98662"
          style="stroke-width:0.26458332">transparency</tspan></text>
-    <ellipse
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path861"
-       cx="182.32043"
-       cy="215.49803"
-       rx="23.529018"
-       ry="15.723262"
-       transform="rotate(-12.704281)" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.3961482px;line-height:1;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.15919444"
-       x="203.02086"
+       x="202.4917"
        y="151.59837"
        id="text865"><tspan
          sodipodi:role="line"
          id="tspan863"
-         x="203.02086"
+         x="202.4917"
          y="151.59837"
          style="fill:#ff0000;stroke-width:0.15919444">too much:</tspan><tspan
          sodipodi:role="line"
-         x="203.02086"
+         x="202.4917"
          y="154.99452"
          style="fill:#ff0000;stroke-width:0.15919444"
          id="tspan868">users need more</tspan><tspan
          sodipodi:role="line"
-         x="203.02086"
+         x="202.4917"
          y="158.39067"
          style="fill:#ff0000;stroke-width:0.15919444"
          id="tspan870">control</tspan></text>
+    <text
+       id="text885"
+       y="147.54388"
+       x="127.99259"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.3961482px;line-height:1;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.15919444"
+       xml:space="preserve"><tspan
+         style="fill:#ff0000;stroke-width:0.15919444"
+         y="147.54388"
+         x="127.99259"
+         id="tspan879"
+         sodipodi:role="line">too little:</tspan><tspan
+         id="tspan883"
+         style="fill:#ff0000;stroke-width:0.15919444"
+         y="150.94003"
+         x="127.99259"
+         sodipodi:role="line">makes chunking</tspan><tspan
+         style="fill:#ff0000;stroke-width:0.15919444"
+         y="154.33618"
+         x="127.99259"
+         sodipodi:role="line"
+         id="tspan891">part of the</tspan><tspan
+         style="fill:#ff0000;stroke-width:0.15919444"
+         y="157.73233"
+         x="127.99259"
+         sodipodi:role="line"
+         id="tspan895">analysis</tspan></text>
   </g>
 </svg>

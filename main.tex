@@ -202,6 +202,289 @@ Not reducible to a flat table without padding and/or loss.
 \end{columns}
 \end{frame}
 
+\begin{frame}{\href{https://awkward-array.org}{https://awkward-array.org}}
+\vspace{0.5 cm}
+\includegraphics[width=\linewidth]{awkward-array-org.png}
+\end{frame}
+
+\begin{frame}[fragile]{Examples of per-event combinatorics in Awkward Array}
+\vspace{0.2 cm}
+\small
+\begin{minted}{python}
+>>> import awkward as ak
+>>> one = ak.Array([["a", "b", "c"], [], ["d", "e"]])
+>>> two = ak.Array([[1.1, 2.2], [3.3], [4.4, 5.5]])
+>>> one
+<Array [['a', 'b', 'c'], [], ['d', 'e']] type='3 * var * string'>
+>>> two
+<Array [[1.1, 2.2], [3.3], [4.4, 5.5]] type='3 * var * float64'>
+\end{minted}
+\vspace{0.2 cm}
+\begin{uncoverenv}<2->
+\begin{minted}{python}
+>>> ak.combinations(one, 2).tolist()
+[[("a", "b"), ("a", "c"), ("b", "c")], [], [("d", "e")]]
+\end{minted}
+\end{uncoverenv}
+\vspace{0.2 cm}
+\begin{uncoverenv}<3->
+\begin{minted}{python}
+>>> ak.cartesian({"x": one, "y": two}).tolist()
+[[{"x": "a", "y": 1.1}, {"x": "a", "y": 2.2}, {"x": "b", "y": 1.1},
+  {"x": "b", "y": 2.2}, {"x": "c", "y": 1.1}, {"x": "c", "y": 2.2}],
+ [],
+ [{"x": "d", "y": 4.4}, {"x": "d", "y": 5.5}, {"x": "e", "y": 4.4},
+  {"x": "e", "y": 5.5}]]
+\end{minted}
+\end{uncoverenv}
+\end{frame}
+
+\begin{frame}{Can Awkward Arrays fit into a Dask collection?}
+\begin{columns}
+\column{0.47\linewidth}
+\vspace{0.25 cm}
+\only<1>{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-1.pdf}}\only<2->{\includegraphics[width=\linewidth]{venn-array-bag-dataframe-2.pdf}}
+
+\column{0.55\linewidth}
+\uncover<3->{\textcolor{darkblue}{Like array:} in that the elements have a single type, rich slicing semantics, and compiled loops.}
+
+\vspace{0.25 cm}
+\uncover<3->{\textcolor{darkblue}{Unlike array:} in that the type can be nested, variable-length, nullable, and heterogeneous unions, partitioning only makes sense in 1D, includes fundamental functions beyond NumPy.}
+
+\vspace{0.25 cm}
+\uncover<4->{\textcolor{darkblue}{Like bag:} in type generality and 1D partitioning.}
+
+\vspace{0.25 cm}
+\uncover<4->{\textcolor{darkblue}{Unlike bag:} in having a single type, rich slicing, an \mintinline{python}{axis} concept, and compiled loops.}
+
+\vspace{0.25 cm}
+\uncover<5->{\textcolor{darkblue}{Unlike dataframe:} in not having an index and not having columns, apart from record fields.}
+
+\vspace{0.25 cm}
+\uncover<6->{\textcolor{darkorange}{\bf Best fit: dask.array, but not a perfect fit.}}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Awkward Arrays as Dask arrays?}
+\large
+\vspace{0.5 cm}
+\begin{itemize}\setlength{\itemsep}{0.75 cm}
+\item<1-> Slices and functions named \mintinline{python}{ak.*} are the fundamental operations in Awkward Array, just as slices, \mintinline{python}{np.*}, and \mintinline{python}{ndarray} methods are in NumPy.
+
+\vspace{0.2 cm}
+A DAG with \mintinline{python}{ak.*} nodes would be a better starting point for optimization.
+
+\item<2-> Awkward Arrays do not have \mintinline{python}{shape} and \mintinline{python}{dtype}, and you quickly run into \mintinline{python}{dask.array} operations that expect them to.
+
+\item<3-> \href{https://github.com/scikit-hep/uproot3}{\textcolor{blue}{\underline{scikit-hep/uproot3}}}'s git history is littered with attempts to make it work.
+\end{itemize}
+
+\Large
+\vspace{0.5 cm}
+\uncover<4->{\mbox{ } \hfill \textcolor{darkorange}{Awkward Arrays would need a new Dask collection type.} \hfill \mbox{ }}
+\end{frame}
+
+\begin{frame}[fragile]{Awkward Array's built-in delayed types}
+\small
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+>>> def read(i):
+...     print("reading", i)
+...     return ak.Array(range(10))
+... 
+>>> form = ak.forms.Form.from_numpy(np.dtype(np.int64))
+>>> array = ak.partitioned([
+...     ak.virtual(read, (i,), form=form, length=10) for i in range(5)
+... ])
+\end{minted}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<2->
+\begin{minted}{python}
+>>> array[:5]
+reading 0
+<Array [0, 1, 2, 3, 4] type='5 * int64'>
+\end{minted}
+\end{uncoverenv}
+\begin{uncoverenv}<3->
+\vspace{-0.3 cm}
+\begin{minted}{python}
+>>> array[:15]
+reading 1
+<Array [0, 1, 2, 3, 4, 5, ... 9, 0, 1, 2, 3, 4] type='15 * int64'>
+\end{minted}
+\end{uncoverenv}
+\vspace{-0.3 cm}
+\begin{uncoverenv}<4->
+\begin{minted}{python}
+>>> array
+reading 4
+<Array [0, 1, 2, 3, 4, 5, ... 4, 5, 6, 7, 8, 9] type='50 * int64'>
+\end{minted}
+\end{uncoverenv}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Awkward Array's built-in delayed types}
+\small
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+>>> array.layout
+\end{minted}
+\vspace{-0.4 cm}
+\begin{Verbatim}[commandchars=\\\{\}]
+<\textcolor{darkgreen}{\textbf{IrregularlyPartitionedArray}}>
+    <\textcolor{darkgreen}{\textbf{partition}} start="0" stop="10">
+        <\textcolor{darkorange}{\textbf{VirtualArray}} cache_key="ak0">
+            <ArrayGenerator f="<function read at 0x7f...>" args="(0,)">
+                <length>10</length>
+                <form>\{
+                    "class": "NumpyArray",
+                    "itemsize": 8,
+                    "format": "l",
+                    "primitive": "int64"
+                \}</form>
+            </ArrayGenerator>
+            <ArrayCache mapping="\{\}"/>
+        </\textcolor{darkorange}{\textbf{VirtualArray}}>
+    </\textcolor{darkgreen}{\textbf{partition}}>
+    <\textcolor{darkgreen}{\textbf{partition}} start="10" stop="20">
+        ...
+\end{Verbatim}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Awkward Array's built-in delayed types}
+\Large
+\vspace{0.25 cm}
+\begin{columns}[t]
+\column{0.55\linewidth}
+\mbox{ } \hfill \textcolor{darkgreen}{\underline{\tt\textbf{PartitionedArray}}} \hfill \mbox{ }
+
+\vspace{0.25 cm}
+\begin{itemize}
+\item Only allowed at the root of an Awkward Array's tree structure.
+
+\item Partition sizes must be known.
+
+\end{itemize}
+
+\column{0.49\linewidth}
+\mbox{ } \hfill \textcolor{darkorange}{\underline{\tt\textbf{VirtualArray}}} \hfill \mbox{ }
+
+\vspace{0.25 cm}
+\begin{itemize}
+\item Allowed anywhere in a tree structure, including nested.
+
+\item Form (detailed type) and length are optional, but recommended.
+
+\item Materializes and caches as soon as an operation needs to know more information.
+
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Fundamental difference between VirtualArrays and Dask arrays}
+\Large
+\vspace{0.25 cm}
+Dask arrays ask the user when to evaluate:
+
+\small
+\begin{minted}{python}
+>>> array = np.concatenate([
+...     da.from_delayed(
+...         dask.delayed(read, pure=True)(i),
+...         shape=(10,),
+...         dtype=np.dtype(np.int64),
+...     ) for i in range(5)
+... ])
+>>> another = array[:15]
+\end{minted}
+\begin{minted}{python}
+>>> another.compute()  # <--- user input!
+reading 0
+reading 1
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4])
+\end{minted}
+
+\Large
+\vspace{0.5 cm}
+Awkward VirtualArrays evaluate whenever they need information.
+\end{frame}
+
+\begin{frame}{Degrees of transparency}
+\vspace{0.25 cm}
+\only<1>{\includegraphics[width=\linewidth]{degrees-of-transparency.pdf}}\only<2>{\includegraphics[width=\linewidth]{degrees-of-transparency-2.pdf}}
+\end{frame}
+
+\begin{frame}{DAG for Awkward Array operations: which level of abstraction?}
+\vspace{0.5 cm}
+\begin{columns}
+\column{0.7\linewidth}
+\only<1>{\includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}}\only<2>{\includegraphics[width=\linewidth]{awkward-1-0-layers-modified.pdf}}
+
+\column{0.3\linewidth}
+\textcolor{darkblue}{\bf High:} DAG nodes are \mintinline{python}{ak.*} functions.
+
+\vspace{0.75 cm}
+\textcolor{darkblue}{\bf Mid:} DAG nodes are \mintinline{python}{ak::Content} methods.
+
+\vspace{1.2 cm}
+\uncover<2->{\textcolor{darkblue}{\bf Low:} DAG nodes are kernel functions.}
+
+\vspace{0.25 cm}
+\end{columns}
+
+\vspace{0.5 cm}
+\large \uncover<2->{Low-level DAG would only be possible if the mid level is ported from C++ to Python, which is something we're thinking about (for other reasons).}
+\vspace{-0.5 cm}
+\end{frame}
+
+\begin{frame}{Use-cases for a DAG}
+\large
+\vspace{0.3 cm}
+\begin{description}\setlength{\itemsep}{0.25 cm}
+\item[\bf Distributed computing] (high or mid-level): may leverage \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}} to internalize Dask, or not.
+
+\vspace{0.2 cm}
+\textcolor{gray}{It must be clear how to use Dask monitoring tools in either case.}
+
+\vspace{0.2 cm}
+\textcolor{gray}{Fusing subgraphs that are independent of event number ({\tt axis=0}) will be an important optimization.}
+
+\item[\bf Static analysis] (high or mid-level): it would be very useful to identify which fields a block of code will access, to bundle requests up-front (especially for high-latency networks).
+
+\item[\bf Streamlining GPU code] (low-level): all of the kernel functions will be ported to CUDA, but we don't want Python calls to be synchronization points between kernels.
+
+\vspace{0.2 cm}
+A Dask DAG over kernels could be converted into a CUDA DAG.
+\end{description}
+\end{frame}
+
+\begin{frame}{In conclusion}
+\large
+\vspace{0.5 cm}
+\begin{itemize}\setlength{\itemsep}{0.5 cm}
+\item Particle physicists (and others!) need large, variable length collections.
+
+\item Despite \textcolor{darkorange}{\tt\textbf{VirtualArray}} and \textcolor{darkgreen}{\tt\textbf{PartitionedArray}}, Awkward Array lacks a DAG representation, which provides more control over distributed computing and other applications.
+
+\item Awkward Arrays don't fit into dask.arrays (we tried!); we're perusing a project to develop Awkward Dask collections with Anaconda.
+
+\item Which level(s) of abstraction?
+
+\begin{itemize}
+\item Low-level DAGs might be important for GPU performance, though a major refactoring would be necessary to make that happen.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
+
 
 %% \begin{frame}{Dask collection types}
 %% \large
@@ -526,6 +809,8 @@ Not reducible to a flat table without padding and/or loss.
 %% \vspace{0.5 cm}
 %% Awkward VirtualArrays evaluate whenever they need information.
 %% \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%% HERE
 
 %% \begin{frame}{Degrees of transparency}
 %% \vspace{0.25 cm}
